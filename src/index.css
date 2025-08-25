@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Indie+Flower:wght@400&family=Sacramento&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Patrick Hand', 'Indie Flower', cursive;
+  line-height: 1.5;
+  font-weight: 400;
+  background: linear-gradient(135deg, #E6E6FA 0%, #87CEEB 50%, #98FB98 100%);
+  min-height: 100vh;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  color: #4a5568;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.habit-card {
+  @apply bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-white/50;
+}
+
+.btn-primary {
+  @apply bg-pastel-purple hover:bg-purple-300 text-purple-800 font-handwritten font-semibold py-3 px-6 rounded-2xl transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1;
+}
+
+.btn-secondary {
+  @apply bg-pastel-mint hover:bg-green-300 text-green-800 font-handwritten font-semibold py-3 px-6 rounded-2xl transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1;
+}
+
+.input-field {
+  @apply bg-white/50 border border-white/70 rounded-2xl px-4 py-3 font-handwritten text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pastel-purple focus:border-transparent;
+}
