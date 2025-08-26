@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Bell, Download, Database, Smartphone } from 'lucide-react';
+import { Bell, Download, Database } from 'lucide-react';
 import BackupSection from '../components/Settings/BackupSection';
 import SettingsIcon from '../components/Icons/SettingsIcon';
 import { notificationService } from '../services/notificationService';
@@ -32,20 +32,6 @@ const Settings = () => {
     }
   };
 
-  const handleTestBackgroundNotification = async () => {
-    try {
-      notificationService.testNotification();
-      toast.success('Notificação de teste enviada!', {
-        title: 'Background Test 🔔',
-        duration: 2000
-      });
-    } catch (error) {
-      console.error('Erro ao testar notificação background:', error);
-      toast.error('Erro ao testar notificação background', {
-        title: 'Erro 😔'
-      });
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -93,26 +79,37 @@ const Settings = () => {
           </div>
           
           {notificationsEnabled && (
-            <div className="p-3 bg-green-50 rounded-xl animate-slide-up">
-              <p className="text-sm font-handwritten text-green-800">
-                ✅ Você receberá lembretes sobre seus hábitos e eventos!
-              </p>
-              <div className="flex gap-2 mt-2">
-                <Button
-                  variant="ghost"
-                  size="xs"
-                  onClick={() => notificationService.testNotification()}
-                >
-                  Testar notificação
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="xs"
-                  onClick={handleTestBackgroundNotification}
-                >
-                  Testar background
-                </Button>
+            <div className="space-y-3 animate-slide-up">
+              <div className="p-3 bg-green-50 rounded-xl">
+                <p className="text-sm font-handwritten text-green-800 mb-2">
+                  ✅ <strong>Notificações ativadas!</strong>
+                </p>
+                <p className="text-xs font-handwritten text-green-700">
+                  Você receberá lembretes sobre seus hábitos mesmo com o app minimizado por alguns minutos.
+                </p>
               </div>
+
+              <div className="p-3 bg-blue-50 rounded-xl border border-blue-200">
+                <p className="text-sm font-handwritten text-blue-800 mb-2">
+                  📱 <strong>Como funcionam:</strong>
+                </p>
+                <ul className="text-xs font-handwritten text-blue-700 space-y-1">
+                  <li>• <strong>App aberto:</strong> Notificações instantâneas</li>
+                  <li>• <strong>App minimizado:</strong> Funciona por ~5-10 min</li>
+                  <li>• <strong>PWA instalado:</strong> Melhor persistência</li>
+                  <li>• <strong>App fechado:</strong> Re-agenda ao abrir</li>
+                </ul>
+              </div>
+
+              <Button
+                variant="primary"
+                size="lg"
+                onClick={() => notificationService.testNotification()}
+                className="w-full"
+                icon="🧪"
+              >
+                Testar Notificação
+              </Button>
             </div>
           )}
           
@@ -126,57 +123,6 @@ const Settings = () => {
         </div>
         </Card.Content>
       </Card>
-
-      {/* Notificações Background */}
-      {notificationsEnabled && (
-        <Card variant="glass" padding="lg">
-          <Card.Header>
-            <div className="flex items-center gap-2">
-              <Smartphone className="text-blue-600" size={20} />
-              <Card.Title>Notificações em Background</Card.Title>
-            </div>
-          </Card.Header>
-
-          <Card.Content>
-          
-          <div className="space-y-3">
-            <div className="p-3 bg-blue-50 rounded-xl">
-              <p className="text-sm font-handwritten text-blue-800 mb-2">
-                🚀 <strong>Funciona mesmo com app fechado!</strong>
-              </p>
-              <p className="text-xs font-handwritten text-blue-700">
-                Suas notificações de hábitos continuarão funcionando mesmo quando o B-612 não estiver aberto na tela.
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-2">
-              <Badge variant="success" size="lg" className="justify-center p-3">
-                <div className="text-center">
-                  <div className="font-semibold">✅ Com App Fechado</div>
-                  <div className="text-xs">Service Worker</div>
-                </div>
-              </Badge>
-              <Badge variant="warning" size="lg" className="justify-center p-3">
-                <div className="text-center">
-                  <div className="font-semibold">🔄 Sem Servidor</div>
-                  <div className="text-xs">100% Local</div>
-                </div>
-              </Badge>
-            </div>
-
-            <Button
-              variant="primary"
-              size="lg"
-              onClick={handleTestBackgroundNotification}
-              className="w-full"
-              icon="🧪"
-            >
-              Testar Notificação Background
-            </Button>
-          </div>
-          </Card.Content>
-        </Card>
-      )}
 
 
       {/* Backup e Dados */}
