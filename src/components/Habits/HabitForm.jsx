@@ -1,7 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Bell } from 'lucide-react';
 
 const HabitForm = ({ habit, onSave, onClose }) => {
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
   const [formData, setFormData] = useState({
     title: habit?.title || '',
     description: habit?.description || '',
@@ -80,8 +87,8 @@ const HabitForm = ({ habit, onSave, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white/90 backdrop-blur-md rounded-2xl p-6 w-full max-w-md animate-slide-up">
+    <div className="fixed inset-0 bg-black/50 flex items-start justify-center p-4 z-[60] overflow-y-auto modal-overlay">
+      <div className="bg-white/90 backdrop-blur-md rounded-2xl p-6 w-full max-w-md animate-slide-up my-auto min-h-0 max-h-[90vh] overflow-y-auto modal-content">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-cute text-purple-800">
             {habit ? 'Editar Hábito' : 'Novo Hábito'}

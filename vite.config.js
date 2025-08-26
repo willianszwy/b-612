@@ -18,24 +18,26 @@ export default defineConfig({
         background_color: '#E6E6FA',
         display: 'standalone',
         orientation: 'portrait',
-        scope: '/',
-        start_url: '/',
+        scope: '/b-612/',
+        start_url: '/b-612/',
         icons: [
           {
-            src: 'pwa-192x192.png',
+            src: 'asteroid-icon.svg',
+            sizes: 'any',
+            type: 'image/svg+xml',
+            purpose: 'any'
+          },
+          {
+            src: 'asteroid-icon.svg',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/svg+xml',
+            purpose: 'maskable'
           },
           {
-            src: 'pwa-512x512.png',
+            src: 'asteroid-icon.svg',
             sizes: '512x512',
-            type: 'image/png'
-          },
-          {
-            src: 'pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'any maskable'
+            type: 'image/svg+xml',
+            purpose: 'maskable'
           }
         ]
       },
