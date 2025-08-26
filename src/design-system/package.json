@@ -1,0 +1,73 @@
+{
+  "name": "@b612/design-system",
+  "version": "1.0.0",
+  "description": "Sistema de design inspirado em O Pequeno Príncipe com tema espacial e cores pastel",
+  "main": "index.js",
+  "files": [
+    "components/",
+    "tokens.js",
+    "styles.css",
+    "index.js",
+    "README.md"
+  ],
+  "keywords": [
+    "design-system",
+    "react",
+    "components",
+    "ui",
+    "pwa",
+    "little-prince",
+    "b612",
+    "glassmorphism",
+    "pastel"
+  ],
+  "author": "B-612 Team",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
+  "dependencies": {
+    "lucide-react": "^0.263.1"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/b612-design-system.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/b612-design-system/issues"
+  },
+  "homepage": "https://github.com/your-username/b612-design-system#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "scripts": {
+    "build": "echo 'Build process for design system'",
+    "test": "echo 'Test suite for components'",
+    "storybook": "echo 'Storybook for component documentation'"
+  },
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "require": "./index.js"
+    },
+    "./styles": {
+      "import": "./styles.css",
+      "require": "./styles.css"
+    },
+    "./tokens": {
+      "import": "./tokens.js",
+      "require": "./tokens.js"
+    },
+    "./components/*": {
+      "import": "./components/*/index.js",
+      "require": "./components/*/index.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

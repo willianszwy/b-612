@@ -1,0 +1,226 @@
+/**
+ * B-612 Design System Styles
+ * Estilos base e utilitários do sistema de design
+ */
+
+/* Importar fontes Google */
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Indie+Flower:wght@400&family=Sacramento&display=swap');
+
+/* Variáveis CSS customizadas */
+:root {
+  /* Cores do design system */
+  --b612-primary-50: #F8F6FF;
+  --b612-primary-100: #F0EBFF;
+  --b612-primary-200: #E6E6FA;
+  --b612-primary-300: #C7B6F5;
+  --b612-primary-500: #8B5CF6;
+  --b612-primary-800: #5B21B6;
+
+  --b612-secondary-200: #98FB98;
+  --b612-secondary-500: #22C55E;
+  --b612-secondary-800: #166534;
+
+  --b612-accent-salmon: #FFA07A;
+  --b612-accent-blue: #87CEEB;
+  --b612-accent-pink: #FFB6C1;
+  --b612-accent-yellow: #FFFFE0;
+
+  /* Gradientes */
+  --b612-gradient-primary: linear-gradient(135deg, #E6E6FA 0%, #87CEEB 50%, #98FB98 100%);
+  --b612-gradient-card: linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.5) 100%);
+  --b612-gradient-modal: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.8) 100%);
+
+  /* Sombras personalizadas */
+  --b612-shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+  --b612-shadow-card: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+
+  /* Animações */
+  --b612-animation-fast: 150ms;
+  --b612-animation-base: 300ms;
+  --b612-animation-slow: 500ms;
+  --b612-easing: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Classes base do design system */
+.b612-glassmorphism {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.b612-card {
+  @apply bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50;
+  @apply hover:shadow-xl transition-all duration-300;
+}
+
+.b612-button-primary {
+  @apply bg-pastel-purple hover:bg-purple-300 text-purple-800;
+  @apply font-handwritten font-semibold py-3 px-6 rounded-2xl;
+  @apply transition-all duration-300 shadow-md hover:shadow-lg;
+  @apply transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-purple-400;
+}
+
+.b612-button-secondary {
+  @apply bg-pastel-mint hover:bg-green-300 text-green-800;
+  @apply font-handwritten font-semibold py-3 px-6 rounded-2xl;
+  @apply transition-all duration-300 shadow-md hover:shadow-lg;
+  @apply transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-green-400;
+}
+
+.b612-input {
+  @apply bg-white/50 border border-white/70 rounded-2xl px-4 py-3;
+  @apply font-handwritten text-gray-700 placeholder-gray-500;
+  @apply focus:outline-none focus:ring-2 focus:ring-pastel-purple focus:border-transparent;
+  @apply transition-all duration-300;
+}
+
+.b612-badge {
+  @apply inline-flex items-center gap-1 px-2.5 py-1 text-sm rounded-full;
+  @apply font-handwritten font-medium whitespace-nowrap;
+  @apply transition-all duration-200;
+}
+
+.b612-badge-primary {
+  @apply bg-pastel-purple text-purple-800 border border-purple-200;
+}
+
+.b612-badge-secondary {
+  @apply bg-pastel-mint text-green-800 border border-green-200;
+}
+
+.b612-badge-accent {
+  @apply bg-pastel-salmon text-orange-800 border border-orange-200;
+}
+
+/* Animações customizadas */
+@keyframes b612-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes b612-slide-up {
+  from { 
+    opacity: 0; 
+    transform: translateY(10px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes b612-bounce-subtle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes b612-pulse-gentle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes b612-float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-10px) rotate(1deg); }
+  66% { transform: translateY(5px) rotate(-1deg); }
+}
+
+/* Classes de animação */
+.b612-animate-fade-in {
+  animation: b612-fade-in var(--b612-animation-slow) var(--b612-easing);
+}
+
+.b612-animate-slide-up {
+  animation: b612-slide-up var(--b612-animation-base) var(--b612-easing);
+}
+
+.b612-animate-bounce-subtle {
+  animation: b612-bounce-subtle 0.6s var(--b612-easing);
+}
+
+.b612-animate-pulse-gentle {
+  animation: b612-pulse-gentle 2s var(--b612-easing) infinite;
+}
+
+.b612-animate-float {
+  animation: b612-float 6s ease-in-out infinite;
+}
+
+/* Hover effects especiais */
+.b612-hover-lift {
+  @apply transition-transform duration-300;
+}
+
+.b612-hover-lift:hover {
+  @apply transform -translate-y-1 shadow-lg;
+}
+
+.b612-hover-glow {
+  @apply transition-all duration-300;
+}
+
+.b612-hover-glow:hover {
+  @apply shadow-lg;
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+}
+
+/* Efeito de estrelas de fundo */
+.b612-starfield {
+  background-image: 
+    radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+    radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1px 1px at 90px 40px, #fff, transparent),
+    radial-gradient(1px 1px at 130px 80px, #fff, transparent),
+    radial-gradient(2px 2px at 160px 30px, #fff, transparent);
+  background-repeat: repeat;
+  background-size: 200px 100px;
+}
+
+/* Container principal com gradient do B-612 */
+.b612-main-container {
+  background: var(--b612-gradient-primary);
+  min-height: 100vh;
+}
+
+/* Utilidades responsivas */
+@media (max-width: 640px) {
+  .b612-mobile-padding {
+    @apply px-4;
+  }
+  
+  .b612-mobile-text {
+    @apply text-sm;
+  }
+}
+
+/* Dark mode support (futuro) */
+@media (prefers-color-scheme: dark) {
+  .b612-adaptive {
+    /* Valores para dark mode serão adicionados aqui quando necessário */
+  }
+}
+
+/* Print styles */
+@media print {
+  .b612-no-print {
+    display: none !important;
+  }
+  
+  .b612-glassmorphism {
+    background: white;
+    backdrop-filter: none;
+  }
+}
+
+/* Acessibilidade */
+@media (prefers-reduced-motion: reduce) {
+  .b612-animate-fade-in,
+  .b612-animate-slide-up,
+  .b612-animate-bounce-subtle,
+  .b612-animate-pulse-gentle,
+  .b612-animate-float,
+  .b612-hover-lift {
+    animation: none !important;
+    transition: none !important;
+  }
+}
