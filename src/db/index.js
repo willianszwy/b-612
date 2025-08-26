@@ -46,13 +46,20 @@ export const habitService = {
       streak: 0,
       lastCompleted: null,
       createdAt: new Date(),
-      isActive: true
+      isActive: 1
     };
     return await db.habits.add(newHabit);
   },
 
   async getHabits() {
-    return await db.habits.where('isActive').equals(true).toArray();
+    try {
+      return await db.habits.where('isActive').equals(1).toArray();
+    } catch (error) {
+      console.error('Erro ao buscar hábitos:', error);
+      // Fallback: buscar todos e filtrar
+      const allHabits = await db.habits.toArray();
+      return allHabits.filter(h => h.isActive === true || h.isActive === 1);
+    }
   },
 
   async updateHabit(id, updates) {
@@ -60,7 +67,7 @@ export const habitService = {
   },
 
   async deleteHabit(id) {
-    return await db.habits.update(id, { isActive: false });
+    return await db.habits.update(id, { isActive: 0 });
   },
 
   async completeHabit(habitId) {
@@ -240,10 +247,27 @@ export const eventService = {
   },
 
   async getEvents(startDate, endDate) {
-    return await db.events
-      .where('date')
-      .between(startDate, endDate, true, true)
-      .toArray();
+    try {
+      // Garantir que as datas estão no formato correto (YYYY-MM-DD)
+      const start = typeof startDate === 'string' ? startDate : startDate.toISOString().split('T')[0];
+      const end = typeof endDate === 'string' ? endDate : endDate.toISOString().split('T')[0];
+      
+      return await db.events
+        .where('date')
+        .between(start, end, true, true)
+        .toArray();
+    } catch (error) {
+      console.error('Erro ao buscar eventos:', error);
+      // Fallback: buscar todos e filtrar manualmente
+      const allEvents = await db.events.toArray();
+      const start = typeof startDate === 'string' ? startDate : startDate.toISOString().split('T')[0];
+      const end = typeof endDate === 'string' ? endDate : endDate.toISOString().split('T')[0];
+      
+      return allEvents.filter(event => {
+        const eventDate = event.date;
+        return eventDate >= start && eventDate <= end;
+      });
+    }
   },
 
   async updateEvent(id, updates) {
@@ -262,15 +286,22 @@ export const notificationService = {
       entityId,
       scheduledTime,
       message,
-      isActive: true
+      isActive: 1
     });
   },
 
   async getActiveNotifications() {
-    return await db.notifications.where('isActive').equals(true).toArray();
+    try {
+      return await db.notifications.where('isActive').equals(1).toArray();
+    } catch (error) {
+      console.error('Erro ao buscar notificações:', error);
+      // Fallback: buscar todas e filtrar
+      const allNotifications = await db.notifications.toArray();
+      return allNotifications.filter(n => n.isActive === true || n.isActive === 1);
+    }
   },
 
   async deactivateNotification(id) {
-    return await db.notifications.update(id, { isActive: false });
+    return await db.notifications.update(id, { isActive: 0 });
   }
 };
