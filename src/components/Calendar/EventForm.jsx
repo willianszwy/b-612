@@ -17,7 +17,7 @@ const EventForm = ({ event, onSave, onClose }) => {
     description: event?.description || '',
     date: event?.date || new Date().toISOString().split('T')[0],
     startTime: event?.startTime || '09:00',
-    endTime: event?.endTime || '',
+    endDate: event?.endDate || '',
     category: event?.category || 'selfcare',
     frequency: event?.frequency || 'once',
     customDays: event?.customDays || [],
@@ -179,9 +179,9 @@ const EventForm = ({ event, onSave, onClose }) => {
               Término (opcional)
             </label>
             <input
-              type="time"
-              value={formData.endTime}
-              onChange={(e) => setFormData(prev => ({ ...prev, endTime: e.target.value }))}
+              type="date"
+              value={formData.endDate}
+              onChange={(e) => setFormData(prev => ({ ...prev, endDate: e.target.value }))}
               className="input-field w-full"
             />
           </div>

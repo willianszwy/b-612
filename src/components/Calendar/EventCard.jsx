@@ -100,7 +100,7 @@ const EventCard = ({ event, onEdit, onDelete }) => {
                 <Clock size={14} />
                 <span className="font-handwritten">
                   {event.startTime}
-                  {event.endTime && ` - ${event.endTime}`}
+                  {event.endDate && ` até ${format(new Date(event.endDate), 'dd/MM')}`}
                 </span>
               </div>
               

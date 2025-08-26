@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Bell, Palette, Download, Database, Smartphone } from 'lucide-react';
+import { Bell, Download, Database, Smartphone } from 'lucide-react';
 import BackupSection from '../components/Settings/BackupSection';
+import SettingsIcon from '../components/Icons/SettingsIcon';
 import { notificationService } from '../services/notificationService';
 import backgroundNotificationService from '../services/backgroundNotificationService';
 import { useToast, useModal, Card, Button, Badge } from '../design-system';
@@ -52,7 +53,9 @@ const Settings = () => {
       {/* Header */}
       <Card variant="glass" padding="lg">
         <div className="text-center">
-          <div className="text-4xl mb-4">⚙️</div>
+          <div className="mb-4 flex justify-center">
+            <SettingsIcon size={64} className="text-purple-600" />
+          </div>
           <Card.Title>Configurações</Card.Title>
           <Card.Description>
             Personalize sua experiência no B-612
@@ -176,36 +179,6 @@ const Settings = () => {
         </Card>
       )}
 
-      {/* Tema */}
-      <div className="habit-card">
-        <div className="flex items-center gap-2 mb-4">
-          <Palette className="text-pink-600" size={20} />
-          <h4 className="font-handwritten text-lg text-purple-800">
-            Aparência
-          </h4>
-        </div>
-        
-        <div className="grid grid-cols-3 gap-3">
-          <div className="p-3 bg-gradient-to-br from-pastel-purple to-pastel-mint rounded-2xl border-2 border-purple-300">
-            <div className="text-center">
-              <div className="text-sm font-handwritten text-purple-800">Pastel</div>
-              <div className="text-xs font-handwritten text-gray-600">Atual</div>
-            </div>
-          </div>
-          <div className="p-3 bg-gray-100 rounded-2xl opacity-50">
-            <div className="text-center">
-              <div className="text-sm font-handwritten text-gray-600">Escuro</div>
-              <div className="text-xs font-handwritten text-gray-500">Em breve</div>
-            </div>
-          </div>
-          <div className="p-3 bg-gray-100 rounded-2xl opacity-50">
-            <div className="text-center">
-              <div className="text-sm font-handwritten text-gray-600">Claro</div>
-              <div className="text-xs font-handwritten text-gray-500">Em breve</div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Backup e Dados */}
       <BackupSection />
@@ -230,18 +203,6 @@ const Settings = () => {
         </div>
       </div>
 
-      {/* Informações Técnicas */}
-      <div className="habit-card">
-        <h4 className="font-handwritten text-lg text-gray-700 mb-3">
-          Informações Técnicas
-        </h4>
-        <div className="space-y-2 font-handwritten text-xs text-gray-500">
-          <p>Versão: 1.0.0</p>
-          <p>PWA: {typeof navigator !== 'undefined' && 'serviceWorker' in navigator ? 'Suportado' : 'Não suportado'}</p>
-          <p>Notificações: {typeof Notification !== 'undefined' ? 'Suportadas' : 'Não suportadas'}</p>
-          <p>Armazenamento: IndexedDB</p>
-        </div>
-      </div>
     </div>
   );
 };

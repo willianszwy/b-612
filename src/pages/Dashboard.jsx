@@ -171,7 +171,7 @@ const Dashboard = () => {
                   <span className="font-handwritten text-sm text-gray-800">{event.title}</span>
                   <div className="text-xs font-handwritten text-gray-600">
                     {event.startTime}
-                    {event.endTime && ` - ${event.endTime}`}
+                    {event.endDate && ` até ${format(new Date(event.endDate), 'dd/MM')}`}
                   </div>
                 </div>
               </div>
