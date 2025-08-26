@@ -114,7 +114,7 @@ const Toast = ({
   return (
     <div 
       className={`
-        w-full
+        w-full min-w-0
         ${visible ? 'animate-slide-up' : 'animate-fade-out'}
         ${className}
       `}
@@ -123,7 +123,7 @@ const Toast = ({
       <div className={`
         ${variantStyles.bgColor} ${variantStyles.borderColor}
         backdrop-blur-md border rounded-2xl p-4 shadow-lg
-        transform transition-all duration-300
+        transform transition-all duration-300 max-w-full
         ${visible ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'}
       `}>
         {/* Conteúdo */}

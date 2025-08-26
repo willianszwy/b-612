@@ -112,12 +112,12 @@ export const ToastProvider = ({ children, maxToasts = 5 }) => {
           return (
             <div
               key={toast.id}
-              className="absolute pointer-events-auto max-w-sm w-full"
+              className="absolute pointer-events-auto max-w-sm w-full px-4"
               style={{
                 ...positionStyle,
-                right: position.includes('right') ? '16px' : undefined,
-                left: position.includes('center') ? '50%' : position.includes('left') ? '16px' : undefined,
-                transform: position.includes('center') ? 'translateX(-50%)' : undefined,
+                right: position.includes('right') ? '0px' : undefined,
+                left: position.includes('center') ? '0px' : position.includes('left') ? '0px' : undefined,
+                transform: position.includes('center') ? 'translateX(calc(50vw - 50%))' : undefined,
               }}
             >
               <Toast
