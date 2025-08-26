@@ -3,7 +3,6 @@ import { Bell, Download, Database, Smartphone } from 'lucide-react';
 import BackupSection from '../components/Settings/BackupSection';
 import SettingsIcon from '../components/Icons/SettingsIcon';
 import { notificationService } from '../services/notificationService';
-import backgroundNotificationService from '../services/backgroundNotificationService';
 import { useToast, useModal, Card, Button, Badge } from '../design-system';
 
 const Settings = () => {
@@ -35,7 +34,7 @@ const Settings = () => {
 
   const handleTestBackgroundNotification = async () => {
     try {
-      await backgroundNotificationService.showTestNotification();
+      notificationService.testNotification();
       toast.success('Notificação de teste enviada!', {
         title: 'Background Test 🔔',
         duration: 2000

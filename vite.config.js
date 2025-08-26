@@ -12,7 +12,11 @@ export default defineConfig({
       devOptions: {
         enabled: true
       },
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
+      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg', 'asteroid-icon.svg'],
+      // Service worker personalizado para notificações
+      srcDir: 'public',
+      filename: 'sw-custom.js',
+      strategies: 'injectManifest',
       manifest: {
         name: 'B-612 - Gestão de Hábitos e Agenda',
         short_name: 'B-612',
@@ -23,6 +27,7 @@ export default defineConfig({
         orientation: 'portrait',
         scope: '/b-612/',
         start_url: '/b-612/',
+        categories: ['productivity', 'lifestyle', 'health'],
         icons: [
           {
             src: 'asteroid-icon.svg',
@@ -45,7 +50,22 @@ export default defineConfig({
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}']
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        skipWaiting: true,
+        clientsClaim: true,
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'google-fonts-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365
+              }
+            }
+          }
+        ]
       }
     })
   ],

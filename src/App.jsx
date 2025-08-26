@@ -8,7 +8,6 @@ import HabitForm from './components/Habits/HabitForm';
 import EventForm from './components/Calendar/EventForm';
 import { habitService, eventService } from './db';
 import { notificationService } from './services/notificationService';
-import backgroundNotificationService from './services/backgroundNotificationService';
 import { ModalProvider, ToastProvider, useToast } from './design-system';
 import './design-system/styles.css';
 
@@ -21,15 +20,7 @@ function AppContent() {
 
   // Effect para inicialização única (sem dependências do toast)
   useEffect(() => {
-    requestNotificationPermission();
-    
-    // Inicializar notificações tradicionais
-    setTimeout(() => {
-      notificationService.initializeAllHabitNotifications();
-    }, 1000);
-
-    // Inicializar notificações em background (funcionam com app fechado)
-    initializeBackgroundNotifications();
+    initializeNotifications();
   }, []); // Executar apenas uma vez
 
   // Effect para listener de eventos (dependente do toast)
@@ -50,28 +41,33 @@ function AppContent() {
     };
   }, [toast]);
 
-  const requestNotificationPermission = async () => {
-    if ('Notification' in window && 'serviceWorker' in navigator) {
-      const permission = await Notification.requestPermission();
-      console.log('Permissão de notificação:', permission);
-    }
-  };
-
-  const initializeBackgroundNotifications = async () => {
+  const initializeNotifications = async () => {
     try {
-      const initialized = await backgroundNotificationService.initialize();
-      if (initialized) {
-        console.log('✅ Notificações em background inicializadas');
+      console.log('🚀 Inicializando sistema unificado de notificações...');
+      
+      // Solicitar permissões se necessário
+      if ('Notification' in window) {
+        const permission = await notificationService.requestPermission();
+        console.log('📋 Permissão de notificação:', permission);
         
-        // Atualizar notificações com dados atuais
-        setTimeout(() => {
-          backgroundNotificationService.updateNotifications();
-        }, 2000);
+        if (permission === 'granted') {
+          // Aguardar um pouco para service worker estar pronto
+          setTimeout(() => {
+            notificationService.initializeAllHabitNotifications();
+          }, 2000);
+          
+          console.log('✅ Sistema unificado inicializado com sucesso');
+        } else {
+          console.log('⚠️ Notificações não permitidas pelo usuário');
+          toast.warning('Permita notificações para receber lembretes de hábitos', {
+            title: 'Notificações 🔔'
+          });
+        }
       } else {
-        console.log('❌ Notificações em background não suportadas');
+        console.log('❌ Notificações não suportadas neste navegador');
       }
     } catch (error) {
-      console.error('Erro ao inicializar notificações background:', error);
+      console.error('❌ Erro ao inicializar sistema de notificações:', error);
     }
   };
 
@@ -112,10 +108,8 @@ function AppContent() {
       // Agendar notificações se habilitadas
       if (habitData.hasNotification && habitData.notificationTime) {
         const newHabit = { ...habitData, id: habitId };
-        // Notificações tradicionais (app aberto)
+        console.log('📅 Agendando notificações para novo hábito:', newHabit.title);
         notificationService.scheduleHabitNotification(newHabit);
-        // Notificações background (app fechado)
-        backgroundNotificationService.updateNotifications();
       }
       
       setShowHabitForm(false);
