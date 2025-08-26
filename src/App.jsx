@@ -8,12 +8,15 @@ import HabitForm from './components/Habits/HabitForm';
 import EventForm from './components/Calendar/EventForm';
 import { habitService, eventService } from './db';
 import { notificationService } from './services/notificationService';
+import { ModalProvider, ToastProvider, useToast } from './design-system';
+import './design-system/styles.css';
 
-function App() {
+function AppContent() {
   const [currentView, setCurrentView] = useState('dashboard');
   const [showHabitForm, setShowHabitForm] = useState(false);
   const [showEventForm, setShowEventForm] = useState(false);
   const [habitsKey, setHabitsKey] = useState(0);
+  const toast = useToast();
 
   useEffect(() => {
     requestNotificationPermission();
@@ -79,9 +82,16 @@ function App() {
       
       // Force re-render of Habits component by updating key
       setHabitsKey(prev => prev + 1);
+      
+      // Mostrar toast de sucesso
+      toast.success('Hábito criado com sucesso!', {
+        title: 'Sucesso! 🎉'
+      });
     } catch (error) {
       console.error('Erro ao criar hábito:', error);
-      alert('Erro ao criar hábito. Tente novamente.');
+      toast.error('Erro ao criar hábito. Tente novamente.', {
+        title: 'Ops! 😔'
+      });
     }
   };
 
@@ -93,9 +103,16 @@ function App() {
       if (currentView !== 'calendar') {
         setCurrentView('calendar');
       }
+      
+      // Mostrar toast de sucesso
+      toast.success('Evento criado com sucesso!', {
+        title: 'Sucesso! 📅'
+      });
     } catch (error) {
       console.error('Erro ao criar evento:', error);
-      alert('Erro ao criar evento. Tente novamente.');
+      toast.error('Erro ao criar evento. Tente novamente.', {
+        title: 'Ops! 😔'
+      });
     }
   };
 
@@ -115,7 +132,7 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div className="App b612-main-container">
       <Layout
         title={getPageTitle()}
         subtitle={getPageSubtitle()}
@@ -143,5 +160,14 @@ function App() {
   );
 }
 
+function App() {
+  return (
+    <ModalProvider>
+      <ToastProvider maxToasts={5}>
+        <AppContent />
+      </ToastProvider>
+    </ModalProvider>
+  );
+}
 
 export default App;

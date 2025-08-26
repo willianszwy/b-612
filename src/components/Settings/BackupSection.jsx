@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Download, Upload, Trash2, Database, AlertTriangle } from 'lucide-react';
 import { backupService } from '../../services/backupService';
+import { useModal, useToast } from '../../design-system';
 
 const BackupSection = () => {
   const [storageInfo, setStorageInfo] = useState(null);
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const modal = useModal();
+  const toast = useToast();
 
   useEffect(() => {
     loadStorageInfo();
@@ -28,11 +31,15 @@ const BackupSection = () => {
       backupService.downloadBackup(data);
       
       setTimeout(() => {
-        alert('✅ Backup exportado com sucesso!');
+        toast.success('Backup exportado com sucesso!', {
+          title: 'Download Iniciado! 💾'
+        });
       }, 500);
     } catch (error) {
       console.error('Erro ao exportar dados:', error);
-      alert('❌ Erro ao exportar dados. Tente novamente.');
+      toast.error('Erro ao exportar dados. Tente novamente.', {
+        title: 'Erro no Export! 😔'
+      });
     } finally {
       setIsExporting(false);
     }
@@ -47,10 +54,14 @@ const BackupSection = () => {
       const data = await backupService.readFile(file);
       await backupService.importData(data);
       await loadStorageInfo();
-      alert('✅ Dados importados com sucesso!');
+      toast.success('Dados importados com sucesso!', {
+        title: 'Import Concluído! 📥'
+      });
     } catch (error) {
       console.error('Erro ao importar dados:', error);
-      alert(`❌ ${error.message}`);
+      toast.error(error.message, {
+        title: 'Erro no Import! 😔'
+      });
     } finally {
       setIsImporting(false);
       event.target.value = '';
@@ -58,14 +69,31 @@ const BackupSection = () => {
   };
 
   const handleClearData = async () => {
+    const confirmed = await modal.confirm(
+      'Esta ação irá remover TODOS os seus dados (hábitos, eventos, progresso). Esta ação não pode ser desfeita. Tem certeza?',
+      {
+        title: 'Limpar Todos os Dados',
+        variant: 'error',
+        confirmText: 'Sim, limpar tudo',
+        cancelText: 'Cancelar',
+        icon: '🗑️'
+      }
+    );
+
+    if (!confirmed) return;
+
     try {
       await backupService.clearAllData();
       await loadStorageInfo();
       setShowClearConfirm(false);
-      alert('✅ Todos os dados foram removidos!');
+      toast.success('Todos os dados foram removidos!', {
+        title: 'Dados Limpos! 🧹'
+      });
     } catch (error) {
       console.error('Erro ao limpar dados:', error);
-      alert('❌ Erro ao limpar dados. Tente novamente.');
+      toast.error('Erro ao limpar dados. Tente novamente.', {
+        title: 'Erro na Limpeza! 😔'
+      });
     }
   };
 

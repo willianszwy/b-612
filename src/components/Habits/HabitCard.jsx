@@ -1,10 +1,13 @@
 import { CheckCircle2, Circle, Flame, Edit, Trash2 } from 'lucide-react';
 import { habitService } from '../../db';
 import { useState } from 'react';
+import { useModal, useToast } from '../../design-system';
 
 const HabitCard = ({ habit, onUpdate, onEdit, onDelete }) => {
   const [isCompleting, setIsCompleting] = useState(false);
   const [showActions, setShowActions] = useState(false);
+  const modal = useModal();
+  const toast = useToast();
 
   const isCompletedToday = () => {
     if (!habit.lastCompleted) return false;
@@ -21,11 +24,21 @@ const HabitCard = ({ habit, onUpdate, onEdit, onDelete }) => {
       const result = await habitService.completeHabit(habit.id);
       if (result.success) {
         onUpdate();
+        toast.success(`${habit.icon || '✨'} ${habit.title} concluído!`, {
+          title: 'Parabéns! 🎉'
+        });
       } else {
-        alert(result.message);
+        await modal.alert(result.message, {
+          title: 'Atenção',
+          variant: 'error',
+          icon: '❌'
+        });
       }
     } catch (error) {
       console.error('Erro ao completar hábito:', error);
+      toast.error('Erro ao completar hábito. Tente novamente.', {
+        title: 'Ops! 😔'
+      });
     } finally {
       setIsCompleting(false);
     }
@@ -121,8 +134,24 @@ const HabitCard = ({ habit, onUpdate, onEdit, onDelete }) => {
                 Editar
               </button>
               <button
-                onClick={() => {
-                  onDelete(habit.id);
+                onClick={async () => {
+                  const confirmed = await modal.confirm(
+                    `Deseja realmente excluir o hábito "${habit.title}"? Esta ação não pode ser desfeita.`,
+                    {
+                      title: 'Excluir Hábito',
+                      variant: 'error',
+                      confirmText: 'Sim, excluir',
+                      cancelText: 'Cancelar',
+                      icon: '🗑️'
+                    }
+                  );
+                  
+                  if (confirmed) {
+                    onDelete(habit.id);
+                    toast.success('Hábito excluído com sucesso', {
+                      title: 'Excluído! 🗑️'
+                    });
+                  }
                   setShowActions(false);
                 }}
                 className="flex items-center gap-2 w-full px-3 py-2 text-left font-handwritten text-red-600 hover:bg-red-100 rounded-lg transition-colors"
