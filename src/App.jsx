@@ -66,7 +66,9 @@ function App() {
 
   const handleSaveHabit = async (habitData) => {
     try {
+      console.log('App.jsx - Salvando hábito:', habitData);
       const habitId = await habitService.createHabit(habitData);
+      console.log('App.jsx - Hábito criado com ID:', habitId);
       
       // Agendar notificações se habilitadas
       if (habitData.hasNotification && habitData.notificationTime) {
@@ -79,6 +81,9 @@ function App() {
       if (currentView !== 'habits') {
         setCurrentView('habits');
       }
+      
+      // Force page refresh to reload habits
+      window.location.reload();
     } catch (error) {
       console.error('Erro ao criar hábito:', error);
       alert('Erro ao criar hábito. Tente novamente.');

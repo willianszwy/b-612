@@ -52,7 +52,7 @@ export const habitService = {
   },
 
   async getHabits() {
-    return await db.habits.where('isActive').equals(1).toArray();
+    return await db.habits.where('isActive').equals(true).toArray();
   },
 
   async updateHabit(id, updates) {
@@ -267,7 +267,7 @@ export const notificationService = {
   },
 
   async getActiveNotifications() {
-    return await db.notifications.where('isActive').equals(1).toArray();
+    return await db.notifications.where('isActive').equals(true).toArray();
   },
 
   async deactivateNotification(id) {

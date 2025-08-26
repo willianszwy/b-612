@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Plus, Search } from 'lucide-react';
 import HabitCard from '../components/Habits/HabitCard';
-import HabitForm from '../components/Habits/HabitForm';
 import PlantIcon from '../components/Icons/PlantIcon';
 import { habitService } from '../db';
 
@@ -10,7 +9,6 @@ const Habits = ({ onAddClick }) => {
   const [filteredHabits, setFilteredHabits] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingHabit, setEditingHabit] = useState(null);
-  const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,6 +27,7 @@ const Habits = ({ onAddClick }) => {
     try {
       setLoading(true);
       const data = await habitService.getHabits();
+      console.log('Hábitos carregados:', data);
       setHabits(data);
     } catch (error) {
       console.error('Erro ao carregar hábitos:', error);
@@ -37,25 +36,10 @@ const Habits = ({ onAddClick }) => {
     }
   };
 
-  const handleSaveHabit = async (habitData) => {
-    try {
-      if (editingHabit) {
-        await habitService.updateHabit(editingHabit.id, habitData);
-      } else {
-        await habitService.createHabit(habitData);
-      }
-      await loadHabits();
-      setShowForm(false);
-      setEditingHabit(null);
-    } catch (error) {
-      console.error('Erro ao salvar hábito:', error);
-      alert('Erro ao salvar hábito. Tente novamente.');
-    }
-  };
 
   const handleEditHabit = (habit) => {
-    setEditingHabit(habit);
-    setShowForm(true);
+    // TODO: Implementar edição de hábitos
+    console.log('Editar hábito:', habit);
   };
 
   const handleDeleteHabit = async (habitId) => {
@@ -71,8 +55,12 @@ const Habits = ({ onAddClick }) => {
   };
 
   const handleAddNew = () => {
-    setEditingHabit(null);
-    setShowForm(true);
+    if (onAddClick) {
+      onAddClick('habit');
+    } else {
+      setEditingHabit(null);
+      setShowForm(true);
+    }
   };
 
   const getStats = () => {
@@ -188,17 +176,6 @@ const Habits = ({ onAddClick }) => {
         </button>
       )}
 
-      {/* Modal do formulário */}
-      {showForm && (
-        <HabitForm
-          habit={editingHabit}
-          onSave={handleSaveHabit}
-          onClose={() => {
-            setShowForm(false);
-            setEditingHabit(null);
-          }}
-        />
-      )}
     </div>
   );
 };
