@@ -3,12 +3,15 @@ import { Plus, Search } from 'lucide-react';
 import HabitCard from '../components/Habits/HabitCard';
 import PlantIcon from '../components/Icons/PlantIcon';
 import { habitService } from '../db';
+import { useModal, useToast } from '../design-system';
 
 const Habits = ({ onAddClick }) => {
   const [habits, setHabits] = useState([]);
   const [filteredHabits, setFilteredHabits] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingHabit, setEditingHabit] = useState(null);
+  const modal = useModal();
+  const toast = useToast();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -43,13 +46,29 @@ const Habits = ({ onAddClick }) => {
   };
 
   const handleDeleteHabit = async (habitId) => {
-    if (window.confirm('Tem certeza que deseja excluir este hábito?')) {
+    const confirmed = await modal.confirm(
+      'Tem certeza que deseja excluir este hábito?',
+      {
+        title: 'Excluir Hábito',
+        variant: 'error',
+        confirmText: 'Sim, excluir',
+        cancelText: 'Cancelar',
+        icon: '🗑️'
+      }
+    );
+
+    if (confirmed) {
       try {
         await habitService.deleteHabit(habitId);
         await loadHabits();
+        toast.success('Hábito excluído com sucesso', {
+          title: 'Excluído! 🗑️'
+        });
       } catch (error) {
         console.error('Erro ao deletar hábito:', error);
-        alert('Erro ao deletar hábito. Tente novamente.');
+        toast.error('Erro ao deletar hábito. Tente novamente.', {
+          title: 'Ops! 😔'
+        });
       }
     }
   };

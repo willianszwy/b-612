@@ -5,6 +5,7 @@ import { ptBR } from 'date-fns/locale';
 import EventCard from '../components/Calendar/EventCard';
 import EventForm from '../components/Calendar/EventForm';
 import { eventService } from '../db';
+import { useModal, useToast } from '../design-system';
 
 const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -14,6 +15,8 @@ const Calendar = () => {
   const [editingEvent, setEditingEvent] = useState(null);
   const [view, setView] = useState('calendar'); // 'calendar' or 'list'
   const [loading, setLoading] = useState(true);
+  const modal = useModal();
+  const toast = useToast();
 
   useEffect(() => {
     loadEvents();
@@ -43,9 +46,14 @@ const Calendar = () => {
       await loadEvents();
       setShowForm(false);
       setEditingEvent(null);
+      toast.success('Evento salvo com sucesso!', {
+        title: 'Sucesso! 📅'
+      });
     } catch (error) {
       console.error('Erro ao salvar evento:', error);
-      alert('Erro ao salvar evento. Tente novamente.');
+      toast.error('Erro ao salvar evento. Tente novamente.', {
+        title: 'Ops! 😔'
+      });
     }
   };
 
@@ -55,13 +63,29 @@ const Calendar = () => {
   };
 
   const handleDeleteEvent = async (eventId) => {
-    if (window.confirm('Tem certeza que deseja excluir este evento?')) {
+    const confirmed = await modal.confirm(
+      'Tem certeza que deseja excluir este evento?',
+      {
+        title: 'Excluir Evento',
+        variant: 'error',
+        confirmText: 'Sim, excluir',
+        cancelText: 'Cancelar',
+        icon: '🗑️'
+      }
+    );
+
+    if (confirmed) {
       try {
         await eventService.deleteEvent(eventId);
         await loadEvents();
+        toast.success('Evento excluído com sucesso', {
+          title: 'Excluído! 🗑️'
+        });
       } catch (error) {
         console.error('Erro ao deletar evento:', error);
-        alert('Erro ao deletar evento. Tente novamente.');
+        toast.error('Erro ao deletar evento. Tente novamente.', {
+          title: 'Ops! 😔'
+        });
       }
     }
   };

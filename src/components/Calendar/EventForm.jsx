@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { X, Bell } from 'lucide-react';
+import { useModal } from '../../design-system';
 
 const EventForm = ({ event, onSave, onClose }) => {
+  const modal = useModal();
+  
   // Prevent body scroll when modal is open
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -57,7 +60,14 @@ const EventForm = ({ event, onSave, onClose }) => {
 
     // Validar frequência personalizada
     if (formData.frequency === 'custom' && formData.customDays.length === 0) {
-      alert('Por favor, selecione pelo menos um dia da semana para frequência personalizada.');
+      await modal.alert(
+        'Por favor, selecione pelo menos um dia da semana para frequência personalizada.',
+        {
+          title: 'Frequência personalizada',
+          variant: 'warning',
+          icon: '⚠️'
+        }
+      );
       return;
     }
 

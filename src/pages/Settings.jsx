@@ -3,13 +3,14 @@ import { Bell, Palette, Download, Database, Smartphone } from 'lucide-react';
 import BackupSection from '../components/Settings/BackupSection';
 import { notificationService } from '../services/notificationService';
 import backgroundNotificationService from '../services/backgroundNotificationService';
-import { useToast } from '../design-system';
+import { useToast, useModal, Card, Button, Badge } from '../design-system';
 
 const Settings = () => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(
     Notification?.permission === 'granted'
   );
   const toast = useToast();
+  const modal = useModal();
 
   const handleNotificationToggle = async () => {
     if (!notificationsEnabled) {
@@ -20,7 +21,14 @@ const Settings = () => {
         notificationService.testNotification();
       }
     } else {
-      alert('Para desativar notificações, use as configurações do seu navegador.');
+      await modal.alert(
+        'Para desativar notificações, use as configurações do seu navegador.',
+        {
+          title: 'Gerenciar Notificações',
+          variant: 'info',
+          icon: '⚙️'
+        }
+      );
     }
   };
 
@@ -42,24 +50,26 @@ const Settings = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="habit-card text-center">
-        <div className="text-4xl mb-4">⚙️</div>
-        <h3 className="font-cute text-xl text-purple-800 mb-2">
-          Configurações
-        </h3>
-        <p className="font-handwritten text-gray-600">
-          Personalize sua experiência no B-612
-        </p>
-      </div>
+      <Card variant="glass" padding="lg">
+        <div className="text-center">
+          <div className="text-4xl mb-4">⚙️</div>
+          <Card.Title>Configurações</Card.Title>
+          <Card.Description>
+            Personalize sua experiência no B-612
+          </Card.Description>
+        </div>
+      </Card>
 
       {/* Notificações */}
-      <div className="habit-card">
-        <div className="flex items-center gap-2 mb-4">
-          <Bell className="text-yellow-600" size={20} />
-          <h4 className="font-handwritten text-lg text-purple-800">
-            Notificações
-          </h4>
-        </div>
+      <Card variant="default" padding="lg">
+        <Card.Header>
+          <div className="flex items-center gap-2">
+            <Bell className="text-yellow-600" size={20} />
+            <Card.Title>Notificações</Card.Title>
+          </div>
+        </Card.Header>
+
+        <Card.Content>
         
         <div className="space-y-3">
           <div className="flex items-center justify-between">
@@ -86,18 +96,20 @@ const Settings = () => {
                 ✅ Você receberá lembretes sobre seus hábitos e eventos!
               </p>
               <div className="flex gap-2 mt-2">
-                <button
+                <Button
+                  variant="ghost"
+                  size="xs"
                   onClick={() => notificationService.testNotification()}
-                  className="text-xs font-handwritten text-green-700 underline"
                 >
                   Testar notificação
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="xs"
                   onClick={handleTestBackgroundNotification}
-                  className="text-xs font-handwritten text-blue-700 underline"
                 >
                   Testar background
-                </button>
+                </Button>
               </div>
             </div>
           )}
@@ -110,17 +122,20 @@ const Settings = () => {
             </div>
           )}
         </div>
-      </div>
+        </Card.Content>
+      </Card>
 
       {/* Notificações Background */}
       {notificationsEnabled && (
-        <div className="habit-card">
-          <div className="flex items-center gap-2 mb-4">
-            <Smartphone className="text-blue-600" size={20} />
-            <h4 className="font-handwritten text-lg text-purple-800">
-              Notificações em Background
-            </h4>
-          </div>
+        <Card variant="glass" padding="lg">
+          <Card.Header>
+            <div className="flex items-center gap-2">
+              <Smartphone className="text-blue-600" size={20} />
+              <Card.Title>Notificações em Background</Card.Title>
+            </div>
+          </Card.Header>
+
+          <Card.Content>
           
           <div className="space-y-3">
             <div className="p-3 bg-blue-50 rounded-xl">
@@ -132,25 +147,33 @@ const Settings = () => {
               </p>
             </div>
             
-            <div className="grid grid-cols-2 gap-2 text-xs font-handwritten">
-              <div className="p-2 bg-green-50 rounded-lg">
-                <div className="text-green-800 font-semibold">✅ Com App Fechado</div>
-                <div className="text-green-600">Service Worker</div>
-              </div>
-              <div className="p-2 bg-yellow-50 rounded-lg">
-                <div className="text-yellow-800 font-semibold">🔄 Sem Servidor</div>
-                <div className="text-yellow-600">100% Local</div>
-              </div>
+            <div className="grid grid-cols-2 gap-2">
+              <Badge variant="success" size="lg" className="justify-center p-3">
+                <div className="text-center">
+                  <div className="font-semibold">✅ Com App Fechado</div>
+                  <div className="text-xs">Service Worker</div>
+                </div>
+              </Badge>
+              <Badge variant="warning" size="lg" className="justify-center p-3">
+                <div className="text-center">
+                  <div className="font-semibold">🔄 Sem Servidor</div>
+                  <div className="text-xs">100% Local</div>
+                </div>
+              </Badge>
             </div>
 
-            <button
+            <Button
+              variant="primary"
+              size="lg"
               onClick={handleTestBackgroundNotification}
-              className="w-full bg-blue-500 text-white font-handwritten py-2 px-4 rounded-xl hover:bg-blue-600 transition-colors"
+              className="w-full"
+              icon="🧪"
             >
-              🧪 Testar Notificação Background
-            </button>
+              Testar Notificação Background
+            </Button>
           </div>
-        </div>
+          </Card.Content>
+        </Card>
       )}
 
       {/* Tema */}
