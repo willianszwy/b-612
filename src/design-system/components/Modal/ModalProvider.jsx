@@ -91,7 +91,6 @@ export const ModalProvider = ({ children }) => {
       {/* Renderizar modais */}
       {modals.map((modal) => {
         const commonProps = {
-          key: modal.id,
           onClose: () => {
             closeModal(modal.id);
             if (modal.onClose) modal.onClose();
@@ -102,6 +101,7 @@ export const ModalProvider = ({ children }) => {
           case 'alert':
             return (
               <AlertModal
+                key={modal.id}
                 {...commonProps}
                 message={modal.message}
                 title={modal.title}
@@ -117,6 +117,7 @@ export const ModalProvider = ({ children }) => {
           case 'confirm':
             return (
               <ConfirmModal
+                key={modal.id}
                 {...commonProps}
                 message={modal.message}
                 title={modal.title}
@@ -139,6 +140,7 @@ export const ModalProvider = ({ children }) => {
             const CustomComponent = modal.component;
             return (
               <CustomModal
+                key={modal.id}
                 {...commonProps}
                 onClose={() => {
                   closeModal(modal.id);
