@@ -33,6 +33,21 @@ export class FabulousDB extends Dexie {
         });
       });
     });
+
+    // Versão 3: Adicionando campo completed aos eventos
+    this.version(3).stores({
+      habits: '++id, title, description, icon, frequency, customDays, streak, lastCompleted, createdAt, isActive',
+      events: '++id, title, description, date, startTime, endTime, category, frequency, customDays, hasNotification, notificationTime, createdAt, isRecurring, parentEventId, completed',
+      notifications: '++id, type, entityId, scheduledTime, message, isActive',
+      progress: '++id, habitId, completedAt, date'
+    }).upgrade(tx => {
+      // Migração: adicionar campo completed padrão para registros existentes
+      return tx.events.toCollection().modify(event => {
+        if (event.completed === undefined) {
+          event.completed = false;
+        }
+      });
+    });
   }
 }
 
@@ -178,6 +193,7 @@ export const eventService = {
       customDays: event.customDays || [],
       isRecurring: event.frequency !== 'once',
       parentEventId: null,
+      completed: false,
       createdAt: new Date()
     };
     
@@ -232,6 +248,7 @@ export const eventService = {
           id: undefined,
           date: currentDate.toISOString().split('T')[0],
           parentEventId: parentId,
+          completed: false,
           createdAt: new Date()
         };
         instances.push(instance);
@@ -276,6 +293,17 @@ export const eventService = {
 
   async deleteEvent(id) {
     return await db.events.delete(id);
+  },
+
+  async toggleEventCompleted(id) {
+    const event = await db.events.get(id);
+    if (!event) {
+      throw new Error('Evento não encontrado');
+    }
+    
+    const completed = !event.completed;
+    await db.events.update(id, { completed });
+    return completed;
   }
 };
 

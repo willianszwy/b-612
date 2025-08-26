@@ -114,8 +114,7 @@ const Toast = ({
   return (
     <div 
       className={`
-        fixed z-[9999] max-w-sm w-full
-        ${getPositionClasses()}
+        w-full
         ${visible ? 'animate-slide-up' : 'animate-fade-out'}
         ${className}
       `}

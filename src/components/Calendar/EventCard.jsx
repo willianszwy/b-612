@@ -1,9 +1,9 @@
-import { Clock, Edit, Trash2, Bell } from 'lucide-react';
+import { Clock, Edit, Trash2, Bell, CheckCircle2, Circle } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { format } from 'date-fns';
 import Portal from '../Portal';
 
-const EventCard = ({ event, onEdit, onDelete }) => {
+const EventCard = ({ event, onEdit, onDelete, onToggleCompleted }) => {
   const [showActions, setShowActions] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const buttonRef = useRef(null);
@@ -77,36 +77,50 @@ const EventCard = ({ event, onEdit, onDelete }) => {
 
   return (
     <>
-      <div className="habit-card relative">
+      <div className={`habit-card relative ${event.completed ? 'ring-2 ring-green-300' : ''}`}>
         <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2">
-              <h3 className="font-handwritten text-lg text-gray-800">
-                {event.title}
-              </h3>
-              {event.hasNotification && (
-                <Bell size={16} className="text-yellow-600" />
+          <div className="flex items-center gap-3 flex-1">
+            {/* Checkbox com mesmo visual dos hábitos */}
+            <button
+              onClick={() => onToggleCompleted && onToggleCompleted(event.id)}
+              className={`transition-all duration-300 ${
+                event.completed
+                  ? 'text-green-600 scale-110'
+                  : 'text-gray-400 hover:text-green-500 hover:scale-105'
+              }`}
+            >
+              {event.completed ? <CheckCircle2 size={28} /> : <Circle size={28} />}
+            </button>
+
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <h3 className={`font-handwritten text-lg ${event.completed ? 'text-green-800 line-through' : 'text-gray-800'}`}>
+                  {event.title}
+                </h3>
+                {event.hasNotification && (
+                  <Bell size={16} className="text-yellow-600" />
+                )}
+              </div>
+            
+              {event.description && (
+                <p className={`text-sm font-handwritten mb-2 ${event.completed ? 'text-gray-500' : 'text-gray-600'}`}>
+                  {event.description}
+                </p>
               )}
-            </div>
-            
-            {event.description && (
-              <p className="text-sm text-gray-600 font-handwritten mb-2">
-                {event.description}
-              </p>
-            )}
-            
-            <div className="flex items-center gap-3 text-sm">
-              <div className="flex items-center gap-1 text-gray-600">
-                <Clock size={14} />
-                <span className="font-handwritten">
-                  {event.startTime}
-                  {event.endDate && ` até ${format(new Date(event.endDate), 'dd/MM')}`}
+              
+              <div className="flex items-center gap-3 text-sm">
+                <div className={`flex items-center gap-1 ${event.completed ? 'text-gray-500' : 'text-gray-600'}`}>
+                  <Clock size={14} />
+                  <span className="font-handwritten">
+                    {event.startTime}
+                    {event.endDate && ` até ${format(new Date(event.endDate), 'dd/MM')}`}
+                  </span>
+                </div>
+                
+                <span className={`px-2 py-1 rounded-full text-xs font-handwritten ${getCategoryColor(event.category)}`}>
+                  {getCategoryLabel(event.category)}
                 </span>
               </div>
-              
-              <span className={`px-2 py-1 rounded-full text-xs font-handwritten ${getCategoryColor(event.category)}`}>
-                {getCategoryLabel(event.category)}
-              </span>
             </div>
           </div>
           

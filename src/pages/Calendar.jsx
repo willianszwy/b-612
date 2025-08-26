@@ -90,6 +90,21 @@ const Calendar = () => {
     }
   };
 
+  const handleToggleEventCompleted = async (eventId) => {
+    try {
+      const completed = await eventService.toggleEventCompleted(eventId);
+      await loadEvents();
+      toast.success(completed ? 'Evento marcado como concluído!' : 'Evento marcado como pendente!', {
+        title: completed ? 'Concluído! ✅' : 'Pendente 📝'
+      });
+    } catch (error) {
+      console.error('Erro ao alterar status do evento:', error);
+      toast.error('Erro ao alterar status do evento. Tente novamente.', {
+        title: 'Ops! 😔'
+      });
+    }
+  };
+
   const getEventsForDate = (date) => {
     return events.filter(event => {
       const eventDate = parseISO(event.date);
@@ -198,6 +213,7 @@ const Calendar = () => {
                   event={event}
                   onEdit={handleEditEvent}
                   onDelete={handleDeleteEvent}
+                  onToggleCompleted={handleToggleEventCompleted}
                 />
               ))}
             </div>
@@ -258,6 +274,7 @@ const Calendar = () => {
                 event={event}
                 onEdit={handleEditEvent}
                 onDelete={handleDeleteEvent}
+                onToggleCompleted={handleToggleEventCompleted}
               />
             ))}
           </div>

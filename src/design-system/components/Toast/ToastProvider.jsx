@@ -104,19 +104,20 @@ export const ToastProvider = ({ children, maxToasts = 5 }) => {
           const index = toasts.findIndex(t => t.id === toast.id);
           const offset = index * 80; // 80px de espaço entre toasts
           
-          const positionStyle = toast.position?.includes('top') 
+          const position = toast.position || 'top-right';
+          const positionStyle = position.includes('top') 
             ? { top: `${16 + offset}px` }
             : { bottom: `${16 + offset}px` };
 
           return (
             <div
               key={toast.id}
-              className="absolute pointer-events-auto"
+              className="absolute pointer-events-auto max-w-sm w-full"
               style={{
                 ...positionStyle,
-                right: toast.position?.includes('right') ? '16px' : undefined,
-                left: toast.position?.includes('center') ? '50%' : toast.position?.includes('left') ? '16px' : undefined,
-                transform: toast.position?.includes('center') ? 'translateX(-50%)' : undefined,
+                right: position.includes('right') ? '16px' : undefined,
+                left: position.includes('center') ? '50%' : position.includes('left') ? '16px' : undefined,
+                transform: position.includes('center') ? 'translateX(-50%)' : undefined,
               }}
             >
               <Toast

@@ -120,8 +120,8 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Progresso Visual */}
-      {stats.todayHabits.total > 0 && (
+      {/* Progresso de Hoje - Hábitos e Eventos */}
+      {(stats.todayHabits.total > 0 || stats.todayEvents.length > 0) && (
         <div className="habit-card">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-handwritten text-lg text-purple-800">Progresso de Hoje</h3>
@@ -130,55 +130,54 @@ const Dashboard = () => {
             </span>
           </div>
           
-          <div className="space-y-2">
-            {todayHabits.slice(0, 3).map((habit, index) => {
-              const isCompleted = habit.lastCompleted && 
-                new Date(habit.lastCompleted).toISOString().split('T')[0] === new Date().toISOString().split('T')[0];
-              
-              return (
-                <div key={habit.id} className="flex items-center gap-3">
-                  <div className={`w-3 h-3 rounded-full ${isCompleted ? 'bg-green-500' : 'bg-gray-300'}`}></div>
-                  <span className={`font-handwritten text-sm flex-1 ${isCompleted ? 'text-green-800 line-through' : 'text-gray-700'}`}>
-                    {habit.icon} {habit.title}
-                  </span>
-                  {isCompleted && <CheckCircle2 size={16} className="text-green-500" />}
+          <div className="space-y-3">
+            {/* Hábitos */}
+            {todayHabits.length > 0 && (
+              <div>
+                <h4 className="font-handwritten text-sm text-gray-600 mb-2">Hábitos</h4>
+                <div className="space-y-2">
+                  {todayHabits.map((habit, index) => {
+                    const isCompleted = habit.lastCompleted && 
+                      new Date(habit.lastCompleted).toISOString().split('T')[0] === new Date().toISOString().split('T')[0];
+                    
+                    return (
+                      <div key={habit.id} className="flex items-center gap-3">
+                        <div className={`w-3 h-3 rounded-full ${isCompleted ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+                        <span className={`font-handwritten text-sm flex-1 ${isCompleted ? 'text-green-800 line-through' : 'text-gray-700'}`}>
+                          {habit.icon} {habit.title}
+                        </span>
+                        {isCompleted && <CheckCircle2 size={16} className="text-green-500" />}
+                      </div>
+                    );
+                  })}
                 </div>
-              );
-            })}
-            
-            {todayHabits.length > 3 && (
-              <div className="text-xs font-handwritten text-gray-500 text-center pt-2">
-                +{todayHabits.length - 3} mais hábitos
+              </div>
+            )}
+
+            {/* Eventos */}
+            {stats.todayEvents.length > 0 && (
+              <div>
+                <h4 className="font-handwritten text-sm text-gray-600 mb-2">Agenda</h4>
+                <div className="space-y-2">
+                  {stats.todayEvents.map((event) => (
+                    <div key={event.id} className="flex items-center gap-3">
+                      <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                      <div className="flex-1">
+                        <span className="font-handwritten text-sm text-gray-800">{event.title}</span>
+                        <div className="text-xs font-handwritten text-gray-600">
+                          {event.startTime}
+                          {event.endDate && ` até ${format(new Date(event.endDate), 'dd/MM')}`}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
         </div>
       )}
 
-      {/* Eventos de Hoje */}
-      {stats.todayEvents.length > 0 && (
-        <div className="habit-card">
-          <div className="flex items-center gap-2 mb-3">
-            <Calendar className="text-blue-600" size={20} />
-            <h3 className="font-handwritten text-lg text-blue-800">Agenda de Hoje</h3>
-          </div>
-          
-          <div className="space-y-2">
-            {stats.todayEvents.map((event) => (
-              <div key={event.id} className="flex items-center gap-3 p-2 bg-white/50 rounded-xl">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                <div className="flex-1">
-                  <span className="font-handwritten text-sm text-gray-800">{event.title}</span>
-                  <div className="text-xs font-handwritten text-gray-600">
-                    {event.startTime}
-                    {event.endDate && ` até ${format(new Date(event.endDate), 'dd/MM')}`}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Mensagem de Encorajamento */}
       <div className="habit-card text-center bg-gradient-to-br from-pastel-purple to-pastel-mint">
