@@ -207,15 +207,6 @@ const Habits = ({ onAddClick }) => {
         </div>
       )}
 
-      {/* Botão flutuante para adicionar */}
-      {habits.length > 0 && (
-        <button
-          onClick={handleAddNew}
-          className="fixed bottom-24 right-4 bg-pastel-purple text-purple-800 p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 z-40"
-        >
-          <Plus size={24} />
-        </button>
-      )}
 
       {/* Formulário de edição de hábitos */}
       {editingHabit && (

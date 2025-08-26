@@ -353,13 +353,6 @@ const Calendar = () => {
           </button>
         </div>
 
-        <button
-          onClick={() => setShowForm(true)}
-          className="btn-secondary inline-flex items-center gap-2"
-        >
-          <Plus size={20} />
-          Novo Evento
-        </button>
       </div>
 
       {/* Conteúdo */}
