@@ -61,15 +61,27 @@ class NotificationService {
     const [hours, minutes] = habit.notificationTime.split(':');
     let nextNotificationDate = this.getNextHabitNotificationDate(habit);
     
-    if (!nextNotificationDate) return;
+    if (!nextNotificationDate) {
+      console.log(`❌ Hábito ${habit.title}: Nenhuma data de notificação encontrada`);
+      return;
+    }
     
     nextNotificationDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
     
     const now = new Date();
     const delay = nextNotificationDate.getTime() - now.getTime();
     
+    console.log(`⏰ Hábito "${habit.title}":`, {
+      agora: now.toLocaleString('pt-BR'),
+      proximaNotificacao: nextNotificationDate.toLocaleString('pt-BR'),
+      delayMinutos: Math.round(delay / (1000 * 60)),
+      frequency: habit.frequency,
+      customDays: habit.customDays
+    });
+    
     if (delay > 0) {
       const timeoutId = setTimeout(() => {
+        console.log(`🔔 Enviando notificação para: ${habit.title}`);
         this.showNotification(`Hora do hábito: ${habit.title}`, {
           body: habit.description || `Não esqueça de ${habit.title.toLowerCase()}!`,
           icon: this.getHabitIcon(habit.icon),
@@ -84,6 +96,10 @@ class NotificationService {
       // Armazenar o timeoutId para poder cancelar depois
       if (!this.habitTimeouts) this.habitTimeouts = new Map();
       this.habitTimeouts.set(habit.id, timeoutId);
+      
+      console.log(`✅ Notificação agendada para ${habit.title} em ${Math.round(delay / (1000 * 60))} minutos`);
+    } else {
+      console.log(`⚠️ Hábito ${habit.title}: Horário já passou hoje, delay: ${delay}`);
     }
   }
 
@@ -98,11 +114,19 @@ class NotificationService {
         const todayNotification = new Date(today);
         todayNotification.setHours(parseInt(hours), parseInt(minutes), 0, 0);
         
+        console.log(`📅 Hábito diário "${habit.title}":`, {
+          agora: fromDate.toLocaleString('pt-BR'),
+          horarioHoje: todayNotification.toLocaleString('pt-BR'),
+          jaPassou: todayNotification <= fromDate
+        });
+        
         if (todayNotification > fromDate) {
+          console.log(`✅ Notificação hoje às ${hours}:${minutes}`);
           return todayNotification;
         } else {
           const tomorrow = new Date(today);
           tomorrow.setDate(tomorrow.getDate() + 1);
+          console.log(`➡️ Notificação agendada para amanhã às ${hours}:${minutes}`);
           return tomorrow;
         }
         
@@ -216,6 +240,29 @@ class NotificationService {
     });
   }
 
+  // Função para testar notificação de hábito em 5 segundos
+  testHabitNotification(habitTitle = 'Teste de Hábito') {
+    console.log('🧪 Testando notificação de hábito em 5 segundos...');
+    setTimeout(() => {
+      this.showNotification(`Hora do hábito: ${habitTitle}`, {
+        body: `Não esqueça de ${habitTitle.toLowerCase()}!`,
+        icon: '/asteroid-icon.svg',
+        tag: 'habit-test'
+      });
+      console.log('🔔 Notificação de teste enviada!');
+    }, 5000);
+  }
+
+  // Debug: Listar todas as notificações ativas
+  debugActiveNotifications() {
+    console.log('🔍 Notificações ativas:', this.habitTimeouts);
+    if (this.habitTimeouts) {
+      this.habitTimeouts.forEach((timeoutId, habitId) => {
+        console.log(`- Hábito ID ${habitId}: timeout ${timeoutId}`);
+      });
+    }
+  }
+
   clearNotifications(tag) {
     if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
       navigator.serviceWorker.controller.postMessage({
@@ -231,13 +278,23 @@ class NotificationService {
       const { habitService } = await import('../db');
       const habits = await habitService.getHabits();
       
+      const habitsWithNotifications = habits.filter(h => h.hasNotification);
+      
+      console.log(`🔔 Inicializando notificações para ${habitsWithNotifications.length} hábitos:`, 
+        habitsWithNotifications.map(h => ({ 
+          title: h.title, 
+          time: h.notificationTime, 
+          frequency: h.frequency,
+          customDays: h.customDays 
+        })));
+      
       habits.forEach(habit => {
         if (habit.hasNotification) {
           this.scheduleHabitNotification(habit);
         }
       });
       
-      console.log(`Inicializadas notificações para ${habits.filter(h => h.hasNotification).length} hábitos`);
+      console.log(`✅ Finalizadas notificações para ${habitsWithNotifications.length} hábitos`);
     } catch (error) {
       console.error('Erro ao inicializar notificações de hábitos:', error);
     }
@@ -254,3 +311,23 @@ class NotificationService {
 }
 
 export const notificationService = new NotificationService();
+
+// Expor funções de debug globalmente durante desenvolvimento
+if (typeof window !== 'undefined' && import.meta.env.DEV) {
+  window.debugNotifications = {
+    test: () => notificationService.testNotification(),
+    testHabit: (title) => notificationService.testHabitNotification(title),
+    active: () => notificationService.debugActiveNotifications(),
+    schedule: (habitId) => {
+      // Re-agendar notificações de um hábito específico
+      import('../db').then(({ habitService }) => {
+        habitService.getHabit(habitId).then(habit => {
+          if (habit && habit.hasNotification) {
+            notificationService.scheduleHabitNotification(habit);
+          }
+        });
+      });
+    }
+  };
+  console.log('🧰 Debug de notificações disponível em window.debugNotifications');
+}
