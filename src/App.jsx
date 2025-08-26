@@ -13,6 +13,7 @@ function App() {
   const [currentView, setCurrentView] = useState('dashboard');
   const [showHabitForm, setShowHabitForm] = useState(false);
   const [showEventForm, setShowEventForm] = useState(false);
+  const [habitsKey, setHabitsKey] = useState(0);
 
   useEffect(() => {
     requestNotificationPermission();
@@ -76,7 +77,8 @@ function App() {
         setCurrentView('habits');
       }
       
-      // Trigger rerender by updating a key or state if needed
+      // Force re-render of Habits component by updating key
+      setHabitsKey(prev => prev + 1);
     } catch (error) {
       console.error('Erro ao criar hábito:', error);
       alert('Erro ao criar hábito. Tente novamente.');
@@ -102,7 +104,7 @@ function App() {
       case 'dashboard':
         return <Dashboard />;
       case 'habits':
-        return <Habits onAddClick={handleAddClick} />;
+        return <Habits key={habitsKey} onAddClick={handleAddClick} />;
       case 'calendar':
         return <Calendar />;
       case 'settings':
