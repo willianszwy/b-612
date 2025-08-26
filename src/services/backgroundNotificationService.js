@@ -7,6 +7,7 @@ class BackgroundNotificationService {
   constructor() {
     this.swRegistration = null;
     this.isSupported = this.checkSupport();
+    this.isInitializing = false; // Flag para evitar múltiplas inicializações
   }
 
   // Verificar suporte a notificações e service workers
@@ -25,14 +26,34 @@ class BackgroundNotificationService {
       return false;
     }
 
-    try {
-      // Registrar service worker customizado
-      this.swRegistration = await navigator.serviceWorker.register(
-        '/custom-sw.js',
-        { scope: '/b-612/' }
-      );
+    // Verificar se já existe um service worker registrado
+    if (this.swRegistration) {
+      console.log('Service Worker já inicializado');
+      return true;
+    }
 
-      console.log('Service Worker registrado:', this.swRegistration);
+    // Evitar múltiplas inicializações simultâneas
+    if (this.isInitializing) {
+      console.log('Service Worker já está sendo inicializado');
+      return false;
+    }
+
+    this.isInitializing = true;
+
+    try {
+      // Verificar se já existe uma instância registrada
+      const existingRegistration = await navigator.serviceWorker.getRegistration('/b-612/');
+      if (existingRegistration) {
+        console.log('Service Worker já registrado, reutilizando:', existingRegistration);
+        this.swRegistration = existingRegistration;
+      } else {
+        // Registrar novo service worker customizado
+        this.swRegistration = await navigator.serviceWorker.register(
+          '/b-612/custom-sw.js',
+          { scope: '/b-612/' }
+        );
+        console.log('Service Worker registrado:', this.swRegistration);
+      }
 
       // Aguardar SW estar ativo
       await this.waitForServiceWorker();
@@ -43,9 +64,11 @@ class BackgroundNotificationService {
       // Solicitar permissão de notificação
       await this.requestNotificationPermission();
 
+      this.isInitializing = false;
       return true;
     } catch (error) {
       console.error('Erro ao inicializar Background Notifications:', error);
+      this.isInitializing = false;
       return false;
     }
   }

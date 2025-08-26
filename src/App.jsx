@@ -19,6 +19,7 @@ function AppContent() {
   const [habitsKey, setHabitsKey] = useState(0);
   const toast = useToast();
 
+  // Effect para inicialização única (sem dependências do toast)
   useEffect(() => {
     requestNotificationPermission();
     
@@ -29,8 +30,10 @@ function AppContent() {
 
     // Inicializar notificações em background (funcionam com app fechado)
     initializeBackgroundNotifications();
+  }, []); // Executar apenas uma vez
 
-    // Escutar completar hábito via notificação
+  // Effect para listener de eventos (dependente do toast)
+  useEffect(() => {
     const handleCompleteFromNotification = (event) => {
       const { habitId, habitTitle } = event.detail;
       toast.info(`Completando hábito: ${habitTitle}`, {
@@ -59,10 +62,6 @@ function AppContent() {
       const initialized = await backgroundNotificationService.initialize();
       if (initialized) {
         console.log('✅ Notificações em background inicializadas');
-        toast.success('Notificações em background ativadas!', {
-          title: 'PWA Configurado 🚀',
-          duration: 3000
-        });
         
         // Atualizar notificações com dados atuais
         setTimeout(() => {
