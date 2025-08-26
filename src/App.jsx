@@ -8,6 +8,7 @@ import HabitForm from './components/Habits/HabitForm';
 import EventForm from './components/Calendar/EventForm';
 import { habitService, eventService } from './db';
 import { notificationService } from './services/notificationService';
+import backgroundNotificationService from './services/backgroundNotificationService';
 import { ModalProvider, ToastProvider, useToast } from './design-system';
 import './design-system/styles.css';
 
@@ -21,16 +22,57 @@ function AppContent() {
   useEffect(() => {
     requestNotificationPermission();
     
-    // Inicializar notificações de hábitos após um breve delay
+    // Inicializar notificações tradicionais
     setTimeout(() => {
       notificationService.initializeAllHabitNotifications();
     }, 1000);
-  }, []);
+
+    // Inicializar notificações em background (funcionam com app fechado)
+    initializeBackgroundNotifications();
+
+    // Escutar completar hábito via notificação
+    const handleCompleteFromNotification = (event) => {
+      const { habitId, habitTitle } = event.detail;
+      toast.info(`Completando hábito: ${habitTitle}`, {
+        title: 'Via Notificação 📱'
+      });
+      // Aqui você pode adicionar lógica para marcar o hábito como completo
+      setHabitsKey(prev => prev + 1); // Força atualização da lista
+    };
+
+    window.addEventListener('completeHabitFromNotification', handleCompleteFromNotification);
+
+    return () => {
+      window.removeEventListener('completeHabitFromNotification', handleCompleteFromNotification);
+    };
+  }, [toast]);
 
   const requestNotificationPermission = async () => {
     if ('Notification' in window && 'serviceWorker' in navigator) {
       const permission = await Notification.requestPermission();
       console.log('Permissão de notificação:', permission);
+    }
+  };
+
+  const initializeBackgroundNotifications = async () => {
+    try {
+      const initialized = await backgroundNotificationService.initialize();
+      if (initialized) {
+        console.log('✅ Notificações em background inicializadas');
+        toast.success('Notificações em background ativadas!', {
+          title: 'PWA Configurado 🚀',
+          duration: 3000
+        });
+        
+        // Atualizar notificações com dados atuais
+        setTimeout(() => {
+          backgroundNotificationService.updateNotifications();
+        }, 2000);
+      } else {
+        console.log('❌ Notificações em background não suportadas');
+      }
+    } catch (error) {
+      console.error('Erro ao inicializar notificações background:', error);
     }
   };
 
@@ -71,7 +113,10 @@ function AppContent() {
       // Agendar notificações se habilitadas
       if (habitData.hasNotification && habitData.notificationTime) {
         const newHabit = { ...habitData, id: habitId };
+        // Notificações tradicionais (app aberto)
         notificationService.scheduleHabitNotification(newHabit);
+        // Notificações background (app fechado)
+        backgroundNotificationService.updateNotifications();
       }
       
       setShowHabitForm(false);

@@ -1,12 +1,15 @@
 import { useState } from 'react';
-import { Bell, Palette, Download, Database } from 'lucide-react';
+import { Bell, Palette, Download, Database, Smartphone } from 'lucide-react';
 import BackupSection from '../components/Settings/BackupSection';
 import { notificationService } from '../services/notificationService';
+import backgroundNotificationService from '../services/backgroundNotificationService';
+import { useToast } from '../design-system';
 
 const Settings = () => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(
     Notification?.permission === 'granted'
   );
+  const toast = useToast();
 
   const handleNotificationToggle = async () => {
     if (!notificationsEnabled) {
@@ -18,6 +21,21 @@ const Settings = () => {
       }
     } else {
       alert('Para desativar notificações, use as configurações do seu navegador.');
+    }
+  };
+
+  const handleTestBackgroundNotification = async () => {
+    try {
+      await backgroundNotificationService.showTestNotification();
+      toast.success('Notificação de teste enviada!', {
+        title: 'Background Test 🔔',
+        duration: 2000
+      });
+    } catch (error) {
+      console.error('Erro ao testar notificação background:', error);
+      toast.error('Erro ao testar notificação background', {
+        title: 'Erro 😔'
+      });
     }
   };
 
@@ -67,12 +85,20 @@ const Settings = () => {
               <p className="text-sm font-handwritten text-green-800">
                 ✅ Você receberá lembretes sobre seus hábitos e eventos!
               </p>
-              <button
-                onClick={() => notificationService.testNotification()}
-                className="mt-2 text-xs font-handwritten text-green-700 underline"
-              >
-                Testar notificação
-              </button>
+              <div className="flex gap-2 mt-2">
+                <button
+                  onClick={() => notificationService.testNotification()}
+                  className="text-xs font-handwritten text-green-700 underline"
+                >
+                  Testar notificação
+                </button>
+                <button
+                  onClick={handleTestBackgroundNotification}
+                  className="text-xs font-handwritten text-blue-700 underline"
+                >
+                  Testar background
+                </button>
+              </div>
             </div>
           )}
           
@@ -85,6 +111,47 @@ const Settings = () => {
           )}
         </div>
       </div>
+
+      {/* Notificações Background */}
+      {notificationsEnabled && (
+        <div className="habit-card">
+          <div className="flex items-center gap-2 mb-4">
+            <Smartphone className="text-blue-600" size={20} />
+            <h4 className="font-handwritten text-lg text-purple-800">
+              Notificações em Background
+            </h4>
+          </div>
+          
+          <div className="space-y-3">
+            <div className="p-3 bg-blue-50 rounded-xl">
+              <p className="text-sm font-handwritten text-blue-800 mb-2">
+                🚀 <strong>Funciona mesmo com app fechado!</strong>
+              </p>
+              <p className="text-xs font-handwritten text-blue-700">
+                Suas notificações de hábitos continuarão funcionando mesmo quando o B-612 não estiver aberto na tela.
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-2 text-xs font-handwritten">
+              <div className="p-2 bg-green-50 rounded-lg">
+                <div className="text-green-800 font-semibold">✅ Com App Fechado</div>
+                <div className="text-green-600">Service Worker</div>
+              </div>
+              <div className="p-2 bg-yellow-50 rounded-lg">
+                <div className="text-yellow-800 font-semibold">🔄 Sem Servidor</div>
+                <div className="text-yellow-600">100% Local</div>
+              </div>
+            </div>
+
+            <button
+              onClick={handleTestBackgroundNotification}
+              className="w-full bg-blue-500 text-white font-handwritten py-2 px-4 rounded-xl hover:bg-blue-600 transition-colors"
+            >
+              🧪 Testar Notificação Background
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Tema */}
       <div className="habit-card">
