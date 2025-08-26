@@ -15,12 +15,6 @@ function App() {
   const [showEventForm, setShowEventForm] = useState(false);
 
   useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js')
-        .then(() => console.log('Service Worker registrado com sucesso'))
-        .catch((error) => console.log('Erro ao registrar Service Worker:', error));
-    }
-
     requestNotificationPermission();
     
     // Inicializar notificações de hábitos após um breve delay
@@ -82,8 +76,7 @@ function App() {
         setCurrentView('habits');
       }
       
-      // Force page refresh to reload habits
-      window.location.reload();
+      // Trigger rerender by updating a key or state if needed
     } catch (error) {
       console.error('Erro ao criar hábito:', error);
       alert('Erro ao criar hábito. Tente novamente.');
