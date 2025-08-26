@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Search } from 'lucide-react';
 import HabitCard from '../components/Habits/HabitCard';
+import HabitForm from '../components/Habits/HabitForm';
 import PlantIcon from '../components/Icons/PlantIcon';
 import { habitService } from '../db';
 import { useModal, useToast } from '../design-system';
@@ -41,8 +42,30 @@ const Habits = ({ onAddClick }) => {
 
 
   const handleEditHabit = (habit) => {
-    // TODO: Implementar edição de hábitos
-    console.log('Editar hábito:', habit);
+    setEditingHabit(habit);
+  };
+
+  const handleSaveHabit = async (habitData) => {
+    try {
+      if (editingHabit) {
+        await habitService.updateHabit(editingHabit.id, habitData);
+        toast.success('Hábito atualizado com sucesso!', {
+          title: 'Atualizado! ✨'
+        });
+      } else {
+        await habitService.createHabit(habitData);
+        toast.success('Hábito criado com sucesso!', {
+          title: 'Novo hábito! 🌱'
+        });
+      }
+      await loadHabits();
+      setEditingHabit(null);
+    } catch (error) {
+      console.error('Erro ao salvar hábito:', error);
+      toast.error('Erro ao salvar hábito. Tente novamente.', {
+        title: 'Ops! 😔'
+      });
+    }
   };
 
   const handleDeleteHabit = async (habitId) => {
@@ -78,7 +101,6 @@ const Habits = ({ onAddClick }) => {
       onAddClick('habit');
     } else {
       setEditingHabit(null);
-      setShowForm(true);
     }
   };
 
@@ -193,6 +215,15 @@ const Habits = ({ onAddClick }) => {
         >
           <Plus size={24} />
         </button>
+      )}
+
+      {/* Formulário de edição de hábitos */}
+      {editingHabit && (
+        <HabitForm
+          habit={editingHabit}
+          onSave={handleSaveHabit}
+          onClose={() => setEditingHabit(null)}
+        />
       )}
 
     </div>
